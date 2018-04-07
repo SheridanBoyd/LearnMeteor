@@ -8,6 +8,7 @@
   {{> hello}}
   {{> info}}
   {{> mde}}
+  {{> Tadventure}}
 </body>
 
 <template name="hello">
@@ -16,10 +17,24 @@
 </template>
 
 <template name='mde'>
-  <form><textarea id="markdown" rows='10' columns=''>{{markdowntext}}</textarea></form>
+  <form><textarea id="markdown" rows='10' cols='40'>{{markdowntext}}</textarea></form>
   <div id="output"></div>
   {{#markdown}}{{markdowntext}}{{/markdown}}
 </template> 
+
+<template name='Tadventure'>
+  <form>
+    Name:
+    <br>
+    <textarea id="editname">{{name}}</textarea>
+    <br>
+    Description:
+    <br>
+    <textarea id="editdesc" rows='10' cols='40'>{{description}}</textarea>
+  </form>
+  <div id="Name"><h2>{{name}}</h2></div>
+  <div id="description">{{#markdown}}{{description}}{{/markdown}}</div>
+</template>
 
 <template name="info">
   <h2>Learn Meteor!</h2>
