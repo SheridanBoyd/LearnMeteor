@@ -1,6 +1,8 @@
 import { Template } from 'meteor/templating';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { markdown } from 'meteor/markdown';
+import nearley from 'nearley';
+import grammar from '../include/CHARSgrammar.js';
 import './main.html';
 
 Template.hello.onCreated(function helloOnCreated() {
@@ -36,9 +38,18 @@ Template.mde.events({
 
 
 Template.mde.helpers({
-  markdowntext() {
+  markdowntext() {   
+    console.log("mde helpers 1")
+    parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar))
+    console.log("mde helpers 2")
     markdowntext = MarkdownText.findOne({'_id': 'onlydoc'});
-    return markdowntext.text;
+    console.log("mde helpers 3", markdowntext.text)
+    parser.feed(markdowntext.text)
+    console.log("mde helpers 4")
+    scodetext = parser.results
+    console.log("mde helpers 5")
+    console.log("markdown stuff",markdowntext.text, scodetext)
+    return scodetext;
   }
 });
 // ##################################### TEXT ADVENTURE STUFF #################################
@@ -61,18 +72,27 @@ Template.Tadventure.events({
    console.log(currentroom)
    newname = room.name
    newdesc = $('#editdesc').val();
-    // console.log("please work",newname,newdesc,$('#editname').val(),$('#editdesc').val())
-    TextAdventure.update({'_id': currentroom}, {'name': newname, 'description': newdesc});
-  },
-  'click button'(event, instance) {
-    console.log('DHSFAJHDSFJKAHDSFJKSADH',instance,event,event.target.id);
-    Template.instance().croom.set(event.target.id);
-    currentroom = Template.instance().croom.get();
-    room = TextAdventure.findOne({'_id': currentroom});
-    if (!room) {
-      TextAdventure.insert({'_id': currentroom, 'name': 'New Room', 'description': 'You are in a new room'});
-    }
+  // console.log("please work",newname,newdesc,$('#editname').val(),$('#editdesc').val())
+  TextAdventure.update({'_id': currentroom}, {'name': newname, 'description': newdesc});
+},
+'click #delete'(event, instance) {
+  currentroom = Template.instance().croom.get();
+  if (currentroom != 'start') {
+    TextAdventure.remove({'_id': currentroom});
+    Template.instance().croom.set('start')
+  } else {
+    console.log('Whatis wrong with you? Why are you trying to delete the start room?!?!?!?')
+  };
+},
+'click .game'(event, instance) {
+  console.log('DHSFAJHDSFJKAHDSFJKSADH',instance,event,event.target.id);
+  Template.instance().croom.set(event.target.id);
+  currentroom = Template.instance().croom.get();
+  room = TextAdventure.findOne({'_id': currentroom});
+  if (!room) {
+    TextAdventure.insert({'_id': currentroom, 'name': currentroom, 'description': 'You are in a new room'});
   }
+},
 });
 
 Template.Tadventure.helpers({
@@ -88,4 +108,12 @@ Template.Tadventure.helpers({
    adventure = TextAdventure.findOne({'_id': currentroom});
    return adventure.description
  },
+ scodedescription() {
+  parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar))
+  currentroom = Template.instance().croom.get()
+  adventure = TextAdventure.findOne({'_id': currentroom});
+  parser.feed(adventure.description)    
+  scodetext = String(parser.results)
+  return scodetext
+  },
 });

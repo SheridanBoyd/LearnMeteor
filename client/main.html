@@ -23,17 +23,18 @@
 </template> 
 
 <template name='Tadventure'>
-  <form>
-    Name:
-    <br>
-    <textarea id="editname">{{name}}</textarea>
-    <br>
-    Description:
-    <br>
-    <textarea id="editdesc" rows='10' cols='40'>{{description}}</textarea>
-  </form>
+  <!-- <form> -->
+  Name:
+  <br>
+  <textarea id="editname">{{name}}</textarea>
+  <button id='delete'>delete room</button>
+  <br>
+  Description:
+  <br>
+  <textarea id="editdesc" rows='10' cols='40'>{{description}}</textarea>
+  <!-- </form> -->
   <div id="Name"><h2>{{name}}</h2></div>
-  <div id="description">{{#markdown}}{{description}}{{/markdown}}</div>
+  <div id="description">{{#markdown}}{{scodedescription}}{{/markdown}}</div>
 </template>
 
 <template name="info">
